@@ -1,0 +1,17 @@
+/* Visit https://aka.ms/tsconfig to read more about this file */
+{
+  /* Extends the config with a convetional tsconfig preset for nodejs v21.x .  see : https://www.npmjs.com/package/@tsconfig/node21 */
+  "extends": "@tsconfig/node21/tsconfig.json",
+  "compilerOptions": {
+    "types": ["node"],
+    "allowJs": false /* Allow JavaScript files to be a part of your program. Use the 'checkJS' option to get errors from these files. */,
+    "outDir": "./build" /* Specify an output folder for all emitted files. */,
+    "importHelpers": true /* Allow importing helper functions from tslib once per project, instead of including them per-file. */,
+    "forceConsistentCasingInFileNames": true /* Ensure that casing is correct in imports. */,
+    "noImplicitAny": true /* Enable error reporting for expressions and declarations with an implied 'any' type. */,
+    "strictNullChecks": true /* When type checking, take into account 'null' and 'undefined'. */,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
+  },
+  "include": ["src/**/*"]
+}
