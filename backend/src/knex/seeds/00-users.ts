@@ -22,7 +22,6 @@ export const seed = async (knex: Knex): Promise<void> => {
           lastname: faker.person.lastName(),
           firstname: faker.person.firstName(),
           password: '$2b$10$e9N3n3nXtcWg8ivNpZUX/./5nJBTGUwLfg..F5LtIazPpqneJ6OgK',
-          enabled: faker.datatype.boolean(),
         },
       ]),
     );
