@@ -1,8 +1,3 @@
-import * as dotenv from 'dotenv';
-
-// Configure dotenv to load environment variables from the .env file.
-dotenv.config();
-
 /**
  * A list of required environment variables that the application expects to be set.
  * @type {string[]}

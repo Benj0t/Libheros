@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+
 import { knex } from '../knex/database';
 import { hashPassword } from '../utils/password';
 import userCreateSchema from '../yupSchemas/userCreateSchema';
@@ -51,28 +52,6 @@ export class UserService {
   }
 
   /**
-   * Retrieves the UUID of a user by their email.
-   * @param {string} email - The email of the user.
-   * @returns {Promise<string | null>} - Returns the UUID of the user or null if not found.
-   */
-  static async getUuidByEmail(email: string): Promise<string | null> {
-    const user = await knex<User>(UserService.tableName).select('uuid').where({ email }).first();
-
-    return user ? user.uuid : null;
-  }
-
-  /**
-   * Retrieves the UUID of a user by their username.
-   * @param {string} username - The username of the user.
-   * @returns {Promise<string | null>} - Returns the UUID of the user or null if not found.
-   */
-  static async getUuidByUsername(username: string): Promise<string | null> {
-    const user = await knex<User>(UserService.tableName).select('uuid').where({ username }).first();
-
-    return user ? user.uuid : null;
-  }
-
-  /**
    * Deletes an user
    * @param {string} id id of the user to remove
    * @returns {Promise<number>} Returns 1 or 0 if not found
@@ -93,7 +72,7 @@ export class UserService {
 
     const sanitizedPayload = {
       // Sanitize payload
-      ...(payload as User),
+      ...payload,
       email: payload.email.toLowerCase(),
       username: payload.username.toLowerCase(),
       firstname: payload.firstname.toLowerCase(),

@@ -19,7 +19,7 @@ module.exports = {
     jest: true,
     es6: true,
   },
-  ignorePatterns: ['.eslintrc.js'],
+  ignorePatterns: ['.eslintrc.js', 'test/**', 'data'],
   rules: {
     'prettier/prettier': ['error'],
     'no-nested-ternary': 'error',
@@ -55,5 +55,7 @@ module.exports = {
     'no-useless-constructor': 'off',
     'no-console': 'off',
     'import/prefer-default-export': 'off',
+    'class-methods-use-this': 'off',
+    'no-empty-function': 'off',
   },
 };

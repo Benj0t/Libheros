@@ -1,13 +1,17 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import checkEnv from './utils/check-env';
 import * as dotenv from 'dotenv';
 import Knex from 'knex';
+
+import { AppModule } from './app.module';
+import checkEnv from './utils/check-env';
 import config from './knex/knexfile';
 
 dotenv.config();
 
-async function bootstrap() {
+/**
+ * @description Start up application
+ */
+async function bootstrap(): Promise<void> {
   try {
     checkEnv();
 
@@ -19,6 +23,7 @@ async function bootstrap() {
     const app = await NestFactory.create(AppModule);
 
     const port = process.env.PORT as string;
+
     await app.listen(port);
   } catch (err) {
     console.log('Error during application startup', { err });

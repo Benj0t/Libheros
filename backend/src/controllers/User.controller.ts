@@ -5,46 +5,56 @@ import {
   UsePipes,
   ConflictException,
   HttpException,
-  BadRequestException,
+  UnauthorizedException,
 } from '@nestjs/common';
-import { YupValidationPipe } from '../pipes/YupValidationPipe';
-import userSignupSchema from '../yupSchemas/userSignupSchema'; // Importez votre schéma de validation depuis le fichier approprié
-import userSigninSchema from '../yupSchemas/userSigninSchema';
-import { SigninUserDto } from '../DTO/signinUser.dto';
-import { User, UserService } from '../service/User.service';
 import { v4 as uuidv4 } from 'uuid';
+import * as jwt from 'jsonwebtoken';
+
+import { YupValidationPipe } from '../pipes/YupValidationPipe';
+import userSignupSchema from '../yupSchemas/userSignupSchema';
+import userSigninSchema from '../yupSchemas/userSigninSchema';
+import SigninUserDto from '../dto/signinUser.dto';
+import { User, UserService } from '../service/User.service';
 import { validateEmail } from '../yupSchemas/loginDataValidation';
 import { verifyPassword } from '../utils/password';
-import * as jwt from 'jsonwebtoken';
 
 @Controller('auth')
 export class UsersController {
   @Post('/signup')
   @UsePipes(new YupValidationPipe(userSignupSchema))
-  async userSignup(@Body() userPayload: User) {
+  async userSignup(
+    @Body() userPayload: Omit<User, 'uuid'>,
+  ): Promise<{ message: string; user: Omit<User, 'password'> }> {
     try {
-      userPayload.uuid = uuidv4();
+      const { password, ...payload } = {
+        uuid: uuidv4(),
+        ...userPayload,
+      };
+
       const [emailAlreadyExist, usernameAlreadyExist] = await Promise.all([
-        UserService.findOneByEmail(userPayload.email),
-        UserService.findOneByUsername(userPayload.username),
+        UserService.findOneByEmail(payload.email),
+        UserService.findOneByUsername(payload.username),
       ]);
 
       if (emailAlreadyExist) {
-        console.log('User email already exist', { email: userPayload.email });
+        console.log('User email already exist', { email: payload.email });
         throw new ConflictException('This Email is already used');
       }
 
       if (usernameAlreadyExist) {
         console.log('User username already exist', {
-          username: userPayload.username,
+          username: payload.username,
         });
         throw new ConflictException('This Username is already used');
       }
-      await UserService.create(userPayload);
-      console.log('user created');
+
+      await UserService.create({ ...payload, password });
+
+      console.log('User registered successfully', payload.uuid);
+
       return {
         message: 'User registered successfully',
-        user: userPayload,
+        user: payload,
       };
     } catch (err) {
       console.log(err);
@@ -54,9 +64,8 @@ export class UsersController {
 
   @Post('/signin')
   @UsePipes(new YupValidationPipe(userSigninSchema))
-  async userSignin(@Body() signinDto: SigninUserDto) {
+  async userSignin(@Body() signinDto: SigninUserDto): Promise<{ message: string; jwt: string }> {
     try {
-      console.log('ok');
       const jwtSecretKey = process.env.JWT_SECRET as string;
       const { credential, password } = signinDto;
 
@@ -66,9 +75,11 @@ export class UsersController {
         : await UserService.findOneByUsername(credential);
 
       const isValidAuthentication = userData && (await verifyPassword(password, userData.password));
+
       if (!isValidAuthentication) {
-        throw new BadRequestException('Invalid user');
+        throw new UnauthorizedException('Unauthorized user');
       }
+
       const token = jwt.sign(
         {
           userId: userData.uuid,
@@ -76,11 +87,16 @@ export class UsersController {
         jwtSecretKey,
         { expiresIn: '1h' },
       );
+
       return {
         message: 'User logged successfully',
         jwt: token,
       };
     } catch (err) {
+      if (err instanceof UnauthorizedException) {
+        throw err;
+      }
+
       console.log(err);
       throw new HttpException('Error during /auth/signin', 500);
     }
