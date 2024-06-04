@@ -14,7 +14,7 @@ export interface User {
 }
 
 @Injectable()
-export class UserModel {
+export class UserService {
   static tableName = 'users';
 
   /**
@@ -23,7 +23,7 @@ export class UserModel {
    * @returns {Promise<User | null>} Returns the user or null
    */
   static async findOneById(id: string): Promise<User | null> {
-    const user = await knex<User>(UserModel.tableName).where({ uuid: id }).first();
+    const user = await knex<User>(UserService.tableName).where({ uuid: id }).first();
 
     return user || null;
   }
@@ -34,7 +34,7 @@ export class UserModel {
    * @returns {Promise<User | null>} Returns the user or null
    */
   static async findOneByEmail(email: string): Promise<User | null> {
-    const user = await knex<User>(UserModel.tableName).where({ email }).first();
+    const user = await knex<User>(UserService.tableName).where({ email }).first();
 
     return user || null;
   }
@@ -45,7 +45,7 @@ export class UserModel {
    * @returns {Promise<User | null>} Returns the user or null
    */
   static async findOneByUsername(username: string): Promise<User | null> {
-    const user = await knex<User>(UserModel.tableName).where({ username }).first();
+    const user = await knex<User>(UserService.tableName).where({ username }).first();
 
     return user || null;
   }
@@ -56,7 +56,7 @@ export class UserModel {
    * @returns {Promise<string | null>} - Returns the UUID of the user or null if not found.
    */
   static async getUuidByEmail(email: string): Promise<string | null> {
-    const user = await knex<User>(UserModel.tableName).select('uuid').where({ email }).first();
+    const user = await knex<User>(UserService.tableName).select('uuid').where({ email }).first();
 
     return user ? user.uuid : null;
   }
@@ -67,7 +67,7 @@ export class UserModel {
    * @returns {Promise<string | null>} - Returns the UUID of the user or null if not found.
    */
   static async getUuidByUsername(username: string): Promise<string | null> {
-    const user = await knex<User>(UserModel.tableName).select('uuid').where({ username }).first();
+    const user = await knex<User>(UserService.tableName).select('uuid').where({ username }).first();
 
     return user ? user.uuid : null;
   }
@@ -78,7 +78,7 @@ export class UserModel {
    * @returns {Promise<number>} Returns 1 or 0 if not found
    */
   static async deleteOneById(id: string): Promise<number> {
-    const result = await knex(UserModel.tableName).where({ uuid: id }).del();
+    const result = await knex(UserService.tableName).where({ uuid: id }).del();
 
     return result;
   }
@@ -101,7 +101,7 @@ export class UserModel {
       password: await hashPassword(payload.password),
     };
 
-    await knex(UserModel.tableName).insert(sanitizedPayload);
+    await knex(UserService.tableName).insert(sanitizedPayload);
 
     return payload;
   }

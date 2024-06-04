@@ -11,7 +11,7 @@ import { YupValidationPipe } from '../pipes/YupValidationPipe';
 import userSignupSchema from '../yupSchemas/userSignupSchema'; // Importez votre schéma de validation depuis le fichier approprié
 import userSigninSchema from '../yupSchemas/userSigninSchema';
 import { SigninUserDto } from '../DTO/signinUser.dto';
-import { User, UserModel } from '../models/User.model';
+import { User, UserService } from '../service/User.service';
 import { v4 as uuidv4 } from 'uuid';
 import { validateEmail } from '../yupSchemas/loginDataValidation';
 import { verifyPassword } from '../utils/password';
@@ -25,8 +25,8 @@ export class UsersController {
     try {
       userPayload.uuid = uuidv4();
       const [emailAlreadyExist, usernameAlreadyExist] = await Promise.all([
-        UserModel.findOneByEmail(userPayload.email),
-        UserModel.findOneByUsername(userPayload.username),
+        UserService.findOneByEmail(userPayload.email),
+        UserService.findOneByUsername(userPayload.username),
       ]);
 
       if (emailAlreadyExist) {
@@ -40,7 +40,7 @@ export class UsersController {
         });
         throw new ConflictException('This Username is already used');
       }
-      await UserModel.create(userPayload);
+      await UserService.create(userPayload);
       console.log('user created');
       return {
         message: 'User registered successfully',
@@ -56,13 +56,14 @@ export class UsersController {
   @UsePipes(new YupValidationPipe(userSigninSchema))
   async userSignin(@Body() signinDto: SigninUserDto) {
     try {
+      console.log('ok');
       const jwtSecretKey = process.env.JWT_SECRET as string;
       const { credential, password } = signinDto;
 
       // If credential is an email, we use findByEmail, else, credential is an username, so we use findByUsername
       const userData = validateEmail(credential)
-        ? await UserModel.findOneByEmail(credential)
-        : await UserModel.findOneByUsername(credential);
+        ? await UserService.findOneByEmail(credential)
+        : await UserService.findOneByUsername(credential);
 
       const isValidAuthentication = userData && (await verifyPassword(password, userData.password));
       if (!isValidAuthentication) {
