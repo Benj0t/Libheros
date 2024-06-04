@@ -6,6 +6,9 @@ import {
   ConflictException,
   HttpException,
   UnauthorizedException,
+  UseGuards,
+  Get,
+  Request,
 } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import * as jwt from 'jsonwebtoken';
@@ -17,9 +20,35 @@ import SigninUserDto from '../dto/signinUser.dto';
 import { User, UserService } from '../service/User.service';
 import { validateEmail } from '../yupSchemas/loginDataValidation';
 import { verifyPassword } from '../utils/password';
+import { AuthGuard } from '../guards/auth.guard';
+import { RequestCtx } from '../types/auth';
 
 @Controller('auth')
 export class UsersController {
+  @Get('/me')
+  @UseGuards(AuthGuard)
+  async me(@Request() req: RequestCtx): Promise<{ user: Omit<User, 'password'> }> {
+    try {
+      const user = await UserService.findOneById(req.userId);
+
+      if (!user) {
+        throw new UnauthorizedException('User not found');
+      }
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { password, ...userWithoutPassword } = user;
+
+      return { user: userWithoutPassword };
+    } catch (err) {
+      if (err instanceof UnauthorizedException) {
+        throw err;
+      }
+
+      console.log(err);
+      throw new HttpException('Error fetching user data', 500);
+    }
+  }
+
   @Post('/signup')
   @UsePipes(new YupValidationPipe(userSignupSchema))
   async userSignup(
