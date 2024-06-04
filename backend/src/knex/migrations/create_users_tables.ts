@@ -8,7 +8,6 @@ export const up = (knex: Knex): Knex.SchemaBuilder => {
     table.string('lastname', 255).notNullable();
     table.string('firstname', 255).notNullable();
     table.string('password', 255).notNullable();
-    table.boolean('enabled').notNullable();
   });
 };
 
