@@ -3,7 +3,7 @@ import { Knex } from 'knex';
 export const up = (knex: Knex): Knex.SchemaBuilder => {
   return knex.schema.createTable('tasks', (table) => {
     table.uuid('uuid').primary().notNullable();
-    table.uuid('table_id').notNullable();
+    table.uuid('list_id').notNullable();
     table.string('name').notNullable();
     table.string('description_short', 200).notNullable();
     table.text('description_long');
@@ -12,7 +12,7 @@ export const up = (knex: Knex): Knex.SchemaBuilder => {
 
     table.boolean('finished').defaultTo(false);
 
-    table.foreign('table_id').references('uuid').inTable('todo_lists');
+    table.foreign('list_id').references('uuid').inTable('todo_lists');
   });
 };
 
