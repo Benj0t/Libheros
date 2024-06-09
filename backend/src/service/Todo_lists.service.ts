@@ -41,6 +41,7 @@ export class TodoListService {
    * @returns {Promise<number>} Returns 1 or 0 if not found
    */
   static async deleteOneById(id: string): Promise<number> {
+    await knex('tasks').where({ list_id: id }).del();
     const result = await knex(TodoListService.tableName).where({ uuid: id }).del();
 
     return result;
