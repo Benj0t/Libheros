@@ -1,6 +1,6 @@
 import React, { FormEvent, useState } from "react";
 import { Container, Box, Typography, TextField, Button } from "@mui/material";
-import signup from "../requests/signup";
+import signup from "../requests/authSignup";
 
 interface SignUpProps {
   switchToLogin: () => void;

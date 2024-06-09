@@ -1,6 +1,6 @@
 import React, { FormEvent, useState } from "react";
 import { Container, Box, Typography, TextField, Button } from "@mui/material";
-import signin from "../requests/signin";
+import signin from "../requests/authSignin";
 import { useNavigate } from "react-router";
 import Cookies from "js-cookie";
 // import { notifyToasterError, notifyToasterSuccess } from "./utils/toaster";
@@ -49,10 +49,9 @@ const Login: React.FC<LoginProps> = ({ switchToSignUp }) => {
             margin="normal"
             required
             fullWidth
-            id="email"
-            label="Adresse e-mail"
-            name="email"
-            autoComplete="email"
+            id="credential"
+            label="Adresse e-mail / Nom d'utilisateur"
+            name="credential"
             autoFocus
             value={credential}
             onChange={(e) => setCredential(e.target.value)}
