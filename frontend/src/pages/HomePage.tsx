@@ -5,11 +5,14 @@ import LeftSidebar from "../components/LeftSidebar";
 import { Grid } from "@mui/material";
 import TodoList from "../types/TodoList";
 import MainContent from "../components/MainContent";
+import Task from "../types/Task";
+import RightSidebar from "../components/RightSidebar";
 
 const HomePage: React.FC = () => {
   const [selectedTodoList, setSelectedTodoList] = useState<TodoList | null>(
     null
   );
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const navigate = useNavigate();
   useEffect(() => {
     const fetchData = async () => {
@@ -27,9 +30,18 @@ const HomePage: React.FC = () => {
         <LeftSidebar setTodoList={setSelectedTodoList} />
       </Grid>
       <Grid item xs={5}>
-        <MainContent TodoList={selectedTodoList} />
+        <MainContent
+          todoList={selectedTodoList}
+          selectedTask={selectedTask}
+          setTask={setSelectedTask}
+        />
       </Grid>
-      <Grid item xs={3}></Grid>
+      <Grid item xs={3}>
+        <RightSidebar
+          selectedTask={selectedTask}
+          setSelectedTask={setSelectedTask}
+        />
+      </Grid>
     </Grid>
   );
 };
