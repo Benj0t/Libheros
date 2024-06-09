@@ -4,7 +4,7 @@ import { knex } from '../knex/database';
 
 export interface Task {
   uuid: string;
-  table_id: string;
+  list_id: string;
   name: string;
   description_short: string;
   description_long?: string;
@@ -34,7 +34,7 @@ export class TaskService {
    * @returns {Promise<Task[]>} Returns the list of tasks
    */
   static async findByTodoListId(todoListId: string): Promise<Task[]> {
-    const tasks = await knex<Task>(TaskService.tableName).where({ table_id: todoListId });
+    const tasks = await knex<Task>(TaskService.tableName).where({ list_id: todoListId });
 
     return tasks;
   }
