@@ -35,6 +35,16 @@ export class TodoListService {
     return todoLists;
   }
 
+  /**
+   * Finds a duplicate TodoList by user ID and name.
+   *
+   * This function checks if a TodoList with the specified name already exists
+   * for a given user. It returns the TodoList if found, otherwise null.
+   *
+   * @param {string} userId - The UUID of the user.
+   * @param {string} name - The name of the TodoList.
+   * @returns {Promise<TodoList | null>} - A promise that resolves to the TodoList if found, or null if not.
+   */
   static async findIsDuplicate(userId: string, name: string): Promise<TodoList | null> {
     const todoLists = await knex<TodoList>(TodoListService.tableName)
       .where({
