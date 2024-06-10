@@ -22,6 +22,7 @@ import { RequestCtx } from '../types/auth';
 @Controller('todo-lists')
 export class TodoListController {
   @Get(':id')
+  @UseGuards(AuthGuard)
   async getTodoList(@Param('id') id: string): Promise<TodoList | null> {
     return TodoListService.findOneById(id);
   }
