@@ -5,8 +5,8 @@ import TodoList from "../types/TodoList";
 interface CreateTaskInteface {
   newTaskName: string;
   todoList: TodoList;
-  newTaskDescriptonShort: string;
-  newTaskDescriptonLong?: string;
+  newTaskDescriptionShort: string;
+  newTaskDescriptionLong?: string;
   newTaskDeadline: Date;
 }
 
@@ -17,8 +17,8 @@ const createTask = async (payload: CreateTaskInteface): Promise<Task> => {
   const sendPayload = {
     list_id: payload.todoList.uuid,
     name: payload.newTaskName,
-    description_short: payload.newTaskDescriptonShort,
-    description_long: payload?.newTaskDescriptonLong,
+    description_short: payload.newTaskDescriptionShort,
+    description_long: payload?.newTaskDescriptionLong,
     deadline: formattedDate,
   };
   const response = await axios.post(`/tasks`, sendPayload);
