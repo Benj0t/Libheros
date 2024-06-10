@@ -35,6 +35,18 @@ export class TodoListService {
     return todoLists;
   }
 
+  static async findIsDuplicate(userId: string, name: string): Promise<TodoList | null> {
+    const todoLists = await knex<TodoList>(TodoListService.tableName)
+      .where({
+        user_uuid: userId,
+        name,
+      })
+      .first();
+
+    if (todoLists === undefined) return null;
+    return todoLists;
+  }
+
   /**
    * Deletes a todo list
    * @param {string} id Id of the todo list to remove

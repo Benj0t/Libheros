@@ -9,6 +9,7 @@ import {
   UsePipes,
   UseGuards,
   Request,
+  BadRequestException,
 } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -41,10 +42,16 @@ export class TodoListController {
       user_uuid: req.userId,
     };
 
+    const isDuplicate = await TodoListService.findIsDuplicate(req.userId, todoList.name);
+
+    if (isDuplicate) {
+      throw new BadRequestException('Name already used');
+    }
     return TodoListService.create(payload);
   }
 
   @Put(':id')
+  @UseGuards(AuthGuard)
   async updateTodoList(
     @Param('id') id: string,
     @Body() todoList: Partial<TodoList>,
@@ -53,6 +60,7 @@ export class TodoListController {
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard)
   async deleteTodoList(@Param('id') id: string): Promise<number> {
     return TodoListService.deleteOneById(id);
   }
