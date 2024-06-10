@@ -8,13 +8,27 @@ interface SignUpProps {
 
 const SignUp: React.FC<SignUpProps> = ({ switchToLogin }) => {
   const [email, setEmail] = useState("");
+  const [confirmEmail, setConfirmEmail] = useState("");
   const [username, setUsername] = useState("");
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
   const handleSubmitForm = async (event: FormEvent) => {
     event.preventDefault();
-    // notifyToasterSuccess("Vous êtes connecté !");
+
+    // Validation de l'email et du mot de passe
+    if (email !== confirmEmail) {
+      console.error("Les emails ne correspondent pas.");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      console.error("Les mots de passe ne correspondent pas.");
+      return;
+    }
+
     try {
       const response = await signup(
         email,
@@ -25,12 +39,11 @@ const SignUp: React.FC<SignUpProps> = ({ switchToLogin }) => {
       );
       console.log(response);
       switchToLogin();
-      // notifyToasterSuccess("Vous êtes connecté !");
     } catch (err) {
       console.log(err);
-      // notifyToasterError("Identifiants introuvables.");
     }
   };
+
   return (
     <Container maxWidth="xs">
       <Box
@@ -60,6 +73,17 @@ const SignUp: React.FC<SignUpProps> = ({ switchToLogin }) => {
             autoFocus
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+          />
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="confirm-email"
+            label="Confirmez l'adresse e-mail"
+            name="confirmEmail"
+            autoComplete="email"
+            value={confirmEmail}
+            onChange={(e) => setConfirmEmail(e.target.value)}
           />
           <TextField
             margin="normal"
@@ -105,6 +129,18 @@ const SignUp: React.FC<SignUpProps> = ({ switchToLogin }) => {
             autoComplete="new-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+          />
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            name="confirmPassword"
+            label="Confirmez le mot de passe"
+            type="password"
+            id="confirmPassword"
+            autoComplete="new-password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
           />
           <Button
             type="submit"
